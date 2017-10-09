@@ -1,0 +1,203 @@
+set nocompatible              " be iMproved, required
+filetype off                  " required
+
+" set the runtime path to include Vundle and initialize
+set rtp+=~/.vim/bundle/Vundle.vim
+call vundle#begin()
+
+" alternatively, pass a path where Vundle should install plugins
+"call vundle#begin('~/some/path/here')
+
+" let Vundle manage Vundle, required
+Plugin 'VundleVim/Vundle.vim'
+
+Plugin 'simplefold'
+Plugin 'splitjoin.vim'
+Plugin 'Zenburn'
+Plugin 'altercation/vim-colors-solarized'
+Plugin 'scrooloose/nerdtree'
+Plugin 'tmhedberg/SimpylFold'
+Plugin 'jistr/vim-nerdtree-tabs'
+Plugin 'Lokaltog/powerline' , {'rtp': 'powerline/bindings/vim/'}
+
+
+
+Bundle 'Valloric/YouCompleteMe'
+
+
+" All of your Plugins must be added before the following line
+call vundle#end()            " required
+filetype plugin indent on    " required
+
+" my setting
+set nu
+set encoding=utf-8
+set tabstop=4
+set shiftwidth=4
+set cursorline
+set smartindent
+set autoindent
+set cindent      "在C编码时,自动完成indent缩进内嵌代码块
+set background=dark
+set hlsearch      "高亮显示搜索结果
+" 关闭错误声音
+set noerrorbells
+set novisualbell
+set t_vb=
+
+syntax enable
+syntax on
+
+let g:solarized_termcolors=256
+set t_Co=256
+colorscheme solarized
+
+"Keep the focus always on the center
+nnoremap j jzz
+nnoremap k kzz
+"fast save
+nnoremap w :w!<CR>
+"call togglebg#map("<F2>")
+"粘贴模式 不进行缩进
+nnoremap <F2> :set invpaste paste?<CR>
+imap <F2> <C-O>:set invpaste paste?<CR>
+set pastetoggle=<F2>
+
+map <F4> <Esc>:call F4exec()<CR>
+map <F5> <Esc>:call F5exec()<CR>
+map <F7> <esc>:call F7exec()<cr>
+map <F10> <esc>:call F10exec()<cr>
+
+" powerline
+set laststatus=2
+set guifont=Source\ Code\ Pro\ for\ Powerline:h15
+let g:Powerline_symbols = 'fancy'
+set termencoding=utf-8
+
+" split
+set splitbelow
+set splitright
+"split navigations
+nnoremap <C-J> <C-W><C-J>
+nnoremap <C-K> <C-W><C-K>
+nnoremap <C-L> <C-W><C-L>
+nnoremap <C-H> <C-W><C-H>
+
+"[](){}
+inoremap ( ()<esc>i
+inoremap <expr>) CloseJump(")")
+inoremap [ []<esc>i
+inoremap <expr>] CloseJump("]")
+inoremap { {<cr>}<esc>O
+inoremap <expr>} CloseJump("}")
+inoremap " ""<esc>i
+inoremap ' ''<esc>i
+:if expand("%:e") == "html"
+	inoremap < <><esc>i
+	inoremap <expr>> CloseJump(">")
+:endif
+inoremap <expr><tab> CloseJump("tab")
+
+:function CloseJump(endchar)
+	:let pc = matchstr(getline('.'), '\%' . col('.') . 'c.')
+	:if a:endchar == "tab"
+		:echo "yes"
+		:if pc == ')' || pc == ']' || pc == '}' || pc == '"' || pc == "'" || (pc == '>' && expand("%:e") == "html")
+			:return "la"
+		:else
+			:return "	"
+		:endif
+	:else
+		:if pc == a:endchar
+			:return "la"
+		:else
+			:if a:endchar == '"'
+				:return '""'
+			:endif
+			:if a:endchar == "'"
+				:return "''"
+			:endif
+			:return a:endchar
+		:endif
+	:endif
+:endf
+
+" Enable folding with the spacebar
+nnoremap <space> za
+
+" nerdtree
+map <F3> :NERDTreeMirror<CR>
+map <F3> :NERDTreeToggle<CR>
+
+" ycm
+"let mapleader = ","  " 这个leader就映射为逗号'，'
+"let g:ycm_global_ycm_extra_conf = '/home/wangchi/.ycm_extra_conf.py' "配置默认的ycm_extra_conf.py
+"nnoremap <leader>jd :YcmCompleter GoToDefinitionElseDeclaration<CR>
+"按,jd 会跳转到定义
+let g:ycm_global_ycm_extra_conf='/home/wangchi/.vim/bundle/YouCompleteMe/third_party/ycmd/cpp/ycm/.ycm_extra_conf.py'
+"cpp
+set completeopt=longest,menu	"让Vim的补全菜单行为与一般IDE一致(参考VimTip1228)
+autocmd InsertLeave * if pumvisible() == 0|pclose|endif	"离开插入模式后自动关闭预览窗口
+inoremap <expr> <CR>       pumvisible() ? "\<C-y>" : "\<CR>"	"回车即选中当前项
+"上下左右键的行为 会显示其他信息
+inoremap <expr> <Down>     pumvisible() ? "\<C-n>" : "\<Down>"
+inoremap <expr> <Up>       pumvisible() ? "\<C-p>" : "\<Up>"
+inoremap <expr> <PageDown> pumvisible() ? "\<PageDown>\<C-p>\<C-n>" : "\<PageDown>"
+inoremap <expr> <PageUp>   pumvisible() ? "\<PageUp>\<C-p>\<C-n>" : "\<PageUp>"
+"youcompleteme  默认tab  s-tab 和自动补全冲突
+"let g:ycm_key_list_select_completion=['<c-n>']
+let g:ycm_key_list_select_completion = ['<Down>']
+"let g:ycm_key_list_previous_completion=['<c-p>']
+let g:ycm_key_list_previous_completion = ['<Up>']
+let g:ycm_confirm_extra_conf=0 "关闭加载.ycm_extra_conf.py提示
+
+let g:ycm_collect_identifiers_from_tags_files=1	" 开启 YCM 基于标签引擎
+let g:ycm_min_num_of_chars_for_completion=2	" 从第2个键入字符就开始罗列匹配项
+let g:ycm_cache_omnifunc=0	" 禁止缓存匹配项,每次都重新生成匹配项
+let g:ycm_seed_identifiers_with_syntax=1	" 语法关键字补全
+"在字符串输入中也能补全
+let g:ycm_complete_in_strings = 1
+
+"switch t_Co between 8(pure terminal) & 256
+function F4exec()
+	if &t_Co == '256'
+		set t_Co=8
+	else
+		set t_Co=256
+	endif
+	set t_Co?
+endf
+
+"exec program
+function F5exec()
+	w
+	if expand("%:e") == "cpp"
+	 	!echo -e "\033[01;32m==== `date` ====\033[0m"; clang -std=c++11 % -c -o /dev/null && g++ --std=c++11 % -o exe -g  && ( echo -e "running:" && time ./exe ) || ( echo -e "\033[01;31mCompilation error.\033[0m" )
+	endif
+	if expand("%:e") == "sh"
+		!echo -e "\033[01;32m==== `date` ====\033[0m"; time ./% 
+	endif
+	if expand("%:e") == "py"
+		!echo -e "\033[01;32m==== `date` ====\033[0m"; time python % 
+	endif
+	if expand("%") == "makefile"
+		!echo -e "\033[01;32m==== `date` ====\033[0m"; make
+	endif
+endf
+
+function F7exec()
+	w
+	if expand("%:e") == "cpp"
+		!echo -e "\033[01;32m==== `date` ====\033[0m"; clang -std=c++11 % -c -o /dev/null && g++ --std=c++11 % -o exe -g  && ( echo -e "\033[01;32mCompilation done.\033[0m" ) || ( echo -e "\033[01;31mCompilation error.\033[0m" )
+	endif
+	if expand("%:e") == "hpp"
+		!echo -e "\033[01;32m==== `date` ====\033[0m"; clang -std=c++11 % -c -o /dev/null && ( echo -e "\033[01;32mCompilation done.\033[0m" ) || ( echo -e "\033[01;31mCompilation error.\033[0m" )
+	endif
+endf
+
+function F10exec()
+	w
+	if expand("%:e") == "cpp"
+		!echo -e "\033[01;32m==== `date` ====\033[0m"; g++ --std=c++11 % -o exe -g && gdb exe -tui
+	endif
+endf
